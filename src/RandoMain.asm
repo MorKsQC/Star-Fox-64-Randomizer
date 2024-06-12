@@ -519,145 +519,383 @@ TBL_FUNC_QuickScoreScreens:		;allows quick end score screens
 	nop
 	
 
-TBL_FUNC_ChoosePlanets:		;allows the player to choose planets with L button at the planet screen.
+TBL_FUNC_ChoosePlanets:        ; allows the player to choose planets with L button at the planet screen.
 
-	lw at, orga(gEnablePlanetSelections) (gp)
-	beq at, r0, (NextTableEntry)
-	nop
-	jal CheckMapScreenState
-	li v1, 3
-	bne v0, v1, (NextTableEntry)
-	lui at, 0x801C
-	lw a1, 0x37c4(at)	;map cursor
-	jal CheckButtons
-	li a0, 0
-	or t7, v0, r0
-	or t6, v1, r0
-	li a0, BUTTON_D_PAD_DOWN16
-	bne a0, t7, (@@CheckIfUp)
-	li.u a0, 0x00060007
-	jal DoSoftResetWithFlag
-	li.l a0, 0x00060007
-	b (NextTableEntry)
-	nop
+    lw at, orga(gEnablePlanetSelections) (gp)
+    beq at, r0, (NextTableEntry)
+    nop
+    jal CheckMapScreenState
+    li v1, 3
+    bne v0, v1, (NextTableEntry)
+    lui at, 0x801C
+    lw a1, 0x37c4(at)    ; map cursor
+    jal CheckButtons
+    li a0, 0
+    or t7, v0, r0
+    or t6, v1, r0
+    li a0, BUTTON_D_PAD_DOWN16
+    bne a0, t7, (@@CheckIfUp)
+    li.u a0, 0x00060007
+    jal DoSoftResetWithFlag
+    li.l a0, 0x00060007
+    b (NextTableEntry)
+    nop
 @@CheckIfUp:
-	li a0, BUTTON_D_PAD_UP16
-	bne a0, t7, (@@CheckIfLeft)
-	li.u a0, 0x00130007
-	jal DoSoftResetWithFlag
-	li.l a0, 0x00130007
-	b (NextTableEntry)
-	nop
+    li a0, BUTTON_D_PAD_UP16
+    bne a0, t7, (@@CheckIfLeft)
+    li.u a0, 0x00130007
+    jal DoSoftResetWithFlag
+    li.l a0, 0x00130007
+    b (NextTableEntry)
+    nop
 @@CheckIfLeft:
-	lw v0, orga(gSpecialStageFlag) (gp)
-	beq v0, r0, (@@CheckIfL)
-	li a0, BUTTON_D_PAD_LEFT16
-	bne a0, t7, (@@CheckIfL)
-	li v0, 1
-	sw v0, orga(gSpecialStageChoosePlanetsFlag) (gp)
-	li.u a0, 0x000A0007
-	jal DoSoftResetWithFlag
-	li.l a0, 0x000A0007
+    lw v0, orga(gSpecialStageFlag) (gp)
+    beq v0, r0, (@@CheckIfL)
+    li a0, BUTTON_D_PAD_LEFT16
+    bne a0, t7, (@@CheckIfL)
+    li v0, 1
+    sw v0, orga(gSpecialStageChoosePlanetsFlag) (gp)
+    li.u a0, 0x000A0007
+    jal DoSoftResetWithFlag
+    li.l a0, 0x000A0007
 @@CheckIfL:
-	li a2, 0x437f
-	li a0, BUTTON_L16
-	bnel a0, t7, (@@ButtonPress)
-	sw r0, 0x37d4(at)	;hide map name
-	li a3, 0x42b0
-	lui t0, 0x801A
-	sh a3, 0xF822(t0)	;overrides position of map text
-	
+    li a2, 0x437f
+    li a0, BUTTON_L16
+    bnel a0, t7, (@@ButtonPress)
+    sw r0, 0x37d4(at)    ; hide map name
+    li a3, 0x42b0
+    lui t0, 0x801A
+    sh a3, 0xF822(t0)    ; overrides position of map text
+    
 @@ButtonPress:
-	sh a2, 0x48dc(at)	;puts map name on-screen 
-	li v1, 1
-	beql a0, t6, (@@OrderCursor)
-	sw v1, 0x37d4(at)	;display map name
-	b (NextTableEntry)
-	nop
+    sh a2, 0x48dc(at)    ; puts map name on-screen 
+    li v1, 1
+    beql a0, t6, (@@OrderCursor)
+    sw v1, 0x37d4(at)    ; display map name
+    b (NextTableEntry)
+    nop
 @@OrderCursor:
-	li v1, 0x9
-	beq a1, v1, (@@P1)
-	li v1, 0x0
-	beq a1, v1, (@@P2)
-	li v1, 0xC
-	beq a1, v1, (@@P3)
-	li v1, 0x4
-	beq a1, v1, (@@P4)
-	li v1, 0xA
-	beq a1, v1, (@@P5)
-	li v1, 0x2
-	beq a1, v1, (@@P6)
-	li v1, 0x6
-	beq a1, v1, (@@P7)
-	li v1, 0xE
-	beq a1, v1, (@@P8)
-	li v1, 0x7
-	beq a1, v1, (@@P9)
-	li v1, 0x5
-	beq a1, v1, (@@P10)
-	li v1, 0xB
-	beq a1, v1, (@@P11)
-	li v1, 0x8
-	beq a1, v1, (@@P12)
-	li v1, 0x3
-	beq a1, v1, (@@P13)
-	li v1, 0x9
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
+    li v1, 0x9
+    beq a1, v1, (@@P1)
+    li v1, 0x0
+    beq a1, v1, (@@P2)
+    li v1, 0xC
+    beq a1, v1, (@@P3)
+    li v1, 0x4
+    beq a1, v1, (@@P4)
+    li v1, 0xA
+    beq a1, v1, (@@P5)
+    li v1, 0x2
+    beq a1, v1, (@@P6)
+    li v1, 0x6
+    beq a1, v1, (@@P7)
+    li v1, 0xE
+    beq a1, v1, (@@P8)
+    li v1, 0x7
+    beq a1, v1, (@@P9)
+    li v1, 0x5
+    beq a1, v1, (@@P10)
+    li v1, 0xB
+    beq a1, v1, (@@P11)
+    li v1, 0x8
+    beq a1, v1, (@@P12)
+    li v1, 0x3
+    beq a1, v1, (@@P13)
+    li v1, 0x9
+    b (NextTableEntry)
+    sw v1, 0x37c4(at)
+    nop
 @@P1:
-	li v1, 0x0
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P2:li v1, 0xC
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P3:li v1, 0x4
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P4:li v1, 0xA
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P5:li v1, 0x2
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P6:li v1, 0x6
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P7:li v1, 0xE
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P8:li v1, 0x7
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P9:li v1, 0x5
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P10:li v1, 0xB
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P11:li v1, 0x8
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P12:li v1, 0x3
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
-@@P13:li v1, 0x1
-	b (NextTableEntry)
-	sw v1, 0x37c4(at)
-	nop
+    li v1, 0x0
+    jal LoadBoss1        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P2:
+    li v1, 0xC
+    jal LoadBoss2        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P3:
+    li v1, 0x4
+    jal LoadBoss3        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P4:
+    li v1, 0xA
+    jal LoadBoss4        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P5:
+    li v1, 0x2
+    jal LoadBoss5        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P6:
+    li v1, 0x6
+    jal LoadBoss6        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P7:
+    li v1, 0xE
+    jal LoadBoss7        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P8:
+    li v1, 0x7
+    jal LoadBoss8        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P9:
+    li v1, 0x5
+    jal LoadBoss9        ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P10:
+    li v1, 0xB
+    jal LoadBoss10       ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P11:
+    li v1, 0x8
+    jal LoadBoss11       ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P12:
+    li v1, 0x3
+    jal LoadBoss12       ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+@@P13:
+    li v1, 0x1
+    jal LoadBoss13       ; jump to the function that loads the boss fight
+    sw v1, 0x37c4(at)
+    b (NextTableEntry)
+    nop
+
+LoadBoss1:
+    lui t0, 0x8024
+    lh v0, 0xd1a4(t0)
+    li v1, 0x041A
+    bne v0, v1, (@@Exit)
+    lw v0, orga(gCornFlag) (gp)
+    bne v0, r0, (@@Corn2Boss)
+    li v0, 0x0124    ; first boss ID which also moves to all range mode
+    j NextTableEntry
+    sh v0, 0xd1a4(t0)
+    nop
+@@Corn2Boss:
+    li v0, 0x0125    ; load boss ID
+    sh v0, 0xd1a4(t0)    ; change first level object to boss ID
+    sh r0, 0xd19a(t0)    ; move pos to 0
+    sh r0, 0xd19c(t0)
+    li v0, -1
+    sh v0, 0xd1b8(t0)    ; change 2nd level object to end data flag
+    li v0, 0x10000017
+    sw.u v0, (0x80181DAC)
+    j NextTableEntry
+    sw.l v0, (0x80181DAC)
+    nop
+
+LoadBoss2:
+    lui t0, 0x8022
+    lh v0, 0xE874(t0)
+    li v1, 0x041A
+    bne v0, v1, (@@Exit)
+    li v1, 0x129    ; put boss ID in level data
+    sh v1, 0xE874(t0)
+    li v1, 0x13
+    sb v1, 0xE82B(t0)
+    li v1, -1
+    j NextTableEntry
+    sh v1, 0xE888(t0)
+    nop
+
+LoadBoss3:
+    lui t0, 0x8022
+    lh v0, 0x1d14(t0)
+    li v1, 0x0422
+    bne v0, v1, (@@Exit)
+    li v0, 0x8015
+    sh v0, 0x1cca(t0)
+    sw r0, 0x1d08(t0)
+    sw r0, 0x1d0C(t0)
+    sw r0, 0x1d10(t0)
+    li v0, 0x12F
+    sh v0, 0x1d14(t0)
+    li v0, 0xE5000000
+    sw v0, 0x1d1c(t0)
+    li v0, 0x02000000
+    sw v0, 0x1d20(t0)
+    sw r0, 0x1d24(t0)
+    li v0, -1
+    j NextTableEntry
+    sh v0, 0x1d28(t0)
+    nop
+
+LoadBoss4:
+    lui t0, 0x8022
+    lh v0, 0x61D0(t0)
+    li v1, 0x03E9
+    bne v0, v1, (@@Exit)
+    li v0, 0x132
+    sh v0, 0x61D0(t0)
+    sh r0, 0x61DE(t0)
+    sh r0, 0x61E0(t0)
+    li v0, -1
+    j NextTableEntry
+    sh v0, 0x61E4(t0)
+    nop
+
+LoadBoss5:
+    lw a0, (LOC_ALIVE_TIMER32)
+    bne a0, r0, (@@Exit)
+    li v0, 154414.90625    ; store pos and section of level to spawn into
+    sw v0, (LOC_CHECKPOINT_LEVEL_POS32)
+    li v0, 0x498
+    sw v0, (LOC_CHECKPOINT_SECTION_ID32)
+    lw v0, orga(gMarathonModeFlag) (gp)
+    bne v0, r0, (@@MarathonModeVE1)
+    lw v0, orga(gBRMVenom1TimeREGULAR) (gp)
+    j NextTableEntry
+    sw v0, orga(gTimerScoreToDisplay) (gp)
+    nop
+@@MarathonModeVE1:
+    lw v0, orga(gBRMVenom1TimeMARATHON) (gp)
+    j NextTableEntry
+    sw v0, orga(gTimerScoreToDisplay) (gp)
+    nop
+
+LoadBoss6:
+    lui t0, 0x8025
+    lhu v0, 0xd5f8(t0)
+    li v1, 0xF380
+    bne v0, v1, (@@Exit)
+    li v0, 0x013B
+    sw r0, 0xD5F8(t0)
+    sw r0, 0xD600(t0)
+    sh v0, 0xD604(t0)
+    sw r0, 0xD60C(t0)
+    li v0, -1
+    j NextTableEntry
+    sh v0, 0xD618(t0)
+    nop
+
+LoadBoss7:
+    lw a0, (LOC_ALIVE_TIMER32)
+    bgt a0, 5, (@@Exit)
+    li v0, 1
+    sw.u v0, (LOC_CHECKPOINT_ALLRANGEMODE_FLAG)
+    j NextTableEntry
+    sw.l v0, (LOC_CHECKPOINT_ALLRANGEMODE_FLAG)
+    nop
+
+LoadBoss8:
+    lui t0, 0x8025
+    lhu v0, 0x4AD8(t0)
+    li v1, 0xEC78
+    bne v0, v1, (@@Exit)
+    li v0, 0x133
+    sh r0, 0x4AD8(t0)
+    sh v0, 0x4AE4(t0)
+    li v0, 0xF8000000
+    sw v0, 0x4AEC(t0)
+    li v0, 0x04000000
+    sw v0, 0x4AF0(t0)
+    li v0, -1
+    j NextTableEntry
+    sh v0, 0x4AF8(t0)
+    nop
+
+LoadBoss9:
+    lui t0, 0x8025
+    lh v0, 0x28ec(t0)
+    li v1, 0x47CD
+    bne v0, v1, (@@Exit)
+    li v0, 0x0151
+    sh v0, 0x28E8(t0)
+    sh v0, 0x21F4(t0)
+    sh v0, 0x29EC(t0)
+    li v0, 0x014D
+    sw.u v0, (LOC_CHECKPOINT_SECTION_ID32)
+    sw.l v0, (LOC_CHECKPOINT_SECTION_ID32)
+    li v0, 73050.0
+    j NextTableEntry
+    sw.l v0, (LOC_CHECKPOINT_SECTION_ID32 + 0x10)
+    nop
+
+LoadBoss10:
+    lui t0, 0x8024
+    lh v0, 0x8744(t0)
+    li v1, 0x03E8
+    bne v0, v1, (@@Exit)
+    li v0, 0x013A
+    j NextTableEntry
+    sh v0, 0x8744(t0)
+    nop
+
+LoadBoss11:
+    lui t0, 0x8022
+    lh v0, 0xE874(t0)
+    li v1, 0x041A
+    bne v0, v1, (@@Exit)
+    li v1, 0x129    ; put boss ID in level data
+    sh v1, 0xE874(t0)
+    li v1, 0x13
+    sb v1, 0xE82B(t0)
+    li v1, -1
+    j NextTableEntry
+    sh v1, 0xE888(t0)
+    nop
+
+LoadBoss12:
+    lui t0, 0x8025
+    lhu v0, 0x9EEC(t0)
+    li v1, 0xF676
+    bne v0, v1, (@@Exit)
+    li v0, 0x13E
+    lui t0, 0x8025
+    sh v0, 0x9EF8(t0)
+    sw r0, 0x9EEC(t0)
+    li v0, -1
+    j NextTableEntry
+    sh v0, 0x9F0C(t0)
+    nop
+
+LoadBoss13:
+    lui t0, 0x8025
+    lh v0, 0xA1C4(t0)
+    li v1, 0x03E8
+    bne v0, v1, (@@Exit)
+    li v0, 0x012E
+    sh v0, 0xA1C4(t0)
+    sw r0, 0xA1D0(t0)
+    sw r0, 0xA1D4(t0)
+    li v0, -1
+    j NextTableEntry
+    sh v0, 0xA1D8(t0)
+    nop
+
+@@Exit:
+    jr ra
+    nop
+
+BossLoadRoutine:
+    ; Your existing boss load routine code
+    ; Ensure transitions and initialization are handled properly
+    jr ra
+    nop
 
 TBL_FUNC_RandomPlanets:		;randomizes at planet screen only, then chooses actual level right before entering
 
